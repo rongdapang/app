@@ -1,9 +1,11 @@
 const CACHE_NAME = 'weather-pet-v1';
 const ASSETS_TO_CACHE = [
-  '/小宠物.html',
+  '/index.html',
   '/manifest.json',
+  '/icons/icon-192.png',
+  '/icons/512.png',
+  '/icons/icon.svg',
   'https://unpkg.com/three@0.160.0/build/three.module.js',
-  'https://unpkg.com/three@0.160.0/examples/jsm/',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css'
 ];
 
@@ -67,7 +69,7 @@ self.addEventListener('push', (event) => {
       badge: 'icons/icon-192.png',
       vibrate: [100, 50, 100],
       data: {
-        url: data.url || '/小宠物.html'
+        url: data.url || '/index.html'
       }
     };
     
@@ -90,7 +92,7 @@ self.addEventListener('notificationclick', (event) => {
         }
       }
       if (clients.openWindow) {
-        return clients.openWindow('/小宠物.html');
+        return clients.openWindow('/index.html');
       }
     })
   );
