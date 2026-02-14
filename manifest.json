@@ -1,0 +1,50 @@
+{
+  "name": "天气小宠",
+  "short_name": "小宠",
+  "description": "专属陪伴的3D天气小宠物",
+  "start_url": "/小宠物.html",
+  "display": "standalone",
+  "background_color": "#e8f4f8",
+  "theme_color": "#5a9bd5",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/maskable-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/maskable-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["lifestyle", "entertainment", "weather"],
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "shortcuts": [
+    {
+      "name": "打开小宠",
+      "short_name": "小宠",
+      "description": "与3D小宠互动",
+      "url": "/小宠物.html",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
