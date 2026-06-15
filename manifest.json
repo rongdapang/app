@@ -4,7 +4,7 @@
   "dir": "ltr",
   "display": "standalone",
   "name": "送给姐姐的小宠物",
-  "orientation": "any",
+  "orientation": "portrait",
   "scope": "/",
   "short_name": "小宠物",
   "start_url": "/",
@@ -29,6 +29,5 @@
       "purpose": "any"
     }
   ],
-  "orientation": "portrait",
   "id": "Rong31953353"
 }
