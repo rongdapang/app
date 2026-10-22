@@ -1,0 +1,16 @@
+# This repository is an allowlisted encrypted delivery channel.
+*.apk
+*.aab
+*.jks
+*.keystore
+private-update.properties
+keystore.properties
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+*.mp3
+*.wav
+*.m4a
+*.ogg
