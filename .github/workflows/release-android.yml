@@ -1,0 +1,77 @@
+name: 发布加密 Android 更新
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - release-candidate/release.json
+      - release-candidate/*.spupdate
+
+permissions:
+  contents: write
+
+concurrency:
+  group: encrypted-android-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: 校验并发布加密包
+    runs-on: ubuntu-latest
+    steps:
+      - name: 获取公开更新仓库
+        uses: actions/checkout@v4
+
+      - name: 校验更新清单与密文
+        id: metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          metadata="release-candidate/release.json"
+          test -f "$metadata"
+          test "$(jq -er '.format' "$metadata")" = "SPUPD001"
+          version_name="$(jq -er '.version_name' "$metadata")"
+          version_code="$(jq -er '.version_code' "$metadata")"
+          asset_name="$(jq -er '.asset_name' "$metadata")"
+          expected_sha="$(jq -er '.sha256 | ascii_downcase' "$metadata")"
+          [[ "$version_name" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]
+          [[ "$version_code" =~ ^[1-9][0-9]*$ ]]
+          [[ "$asset_name" == "StudyPet-$version_name.spupdate" ]]
+          [[ "$expected_sha" =~ ^[a-f0-9]{64}$ ]]
+          asset_path="release-candidate/$asset_name"
+          test -f "$asset_path"
+          test "$(find release-candidate -maxdepth 1 -type f -name '*.spupdate' | wc -l)" -eq 1
+          test "$(head -c 8 "$asset_path")" = "SPUPD001"
+          actual_sha="$(sha256sum "$asset_path" | cut -d ' ' -f 1)"
+          test "$actual_sha" = "$expected_sha"
+          jq -er '.notes | strings | select(length > 0)' "$metadata" > "$RUNNER_TEMP/release-notes.txt"
+          {
+            echo "version_name=$version_name"
+            echo "asset_name=$asset_name"
+            echo "asset_path=$asset_path"
+            echo "sha256=$actual_sha"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: 创建不可变版本
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION_NAME: ${{ steps.metadata.outputs.version_name }}
+          ASSET_NAME: ${{ steps.metadata.outputs.asset_name }}
+          ASSET_PATH: ${{ steps.metadata.outputs.asset_path }}
+          EXPECTED_SHA: ${{ steps.metadata.outputs.sha256 }}
+        run: |
+          set -euo pipefail
+          tag="v${VERSION_NAME}"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            existing_url="$(gh api "repos/${GITHUB_REPOSITORY}/releases/tags/$tag" --jq '.assets[] | select(.name == env.ASSET_NAME) | .browser_download_url')"
+            test -n "$existing_url"
+            downloaded="$RUNNER_TEMP/$ASSET_NAME"
+            curl --fail --location --silent --show-error "$existing_url" --output "$downloaded"
+            test "$(sha256sum "$downloaded" | cut -d ' ' -f 1)" = "$EXPECTED_SHA"
+            exit 0
+          fi
+          gh release create "$tag" "$ASSET_PATH" \
+            --target "$GITHUB_SHA" \
+            --title "只给你 ${tag}" \
+            --notes-file "$RUNNER_TEMP/release-notes.txt"

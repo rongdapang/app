@@ -1,0 +1,8 @@
+{
+  "format": "SPUPD001",
+  "version_name": "1.2.0",
+  "version_code": 3,
+  "asset_name": "StudyPet-1.2.0.spupdate",
+  "sha256": "d3074114f5cd74398f0224d3a44adec90c3f1917a070897961b54a262e5bbf33",
+  "notes": "资源保护升级：后续更新改为加密下载并在本机验证安装；同时提升更新失败恢复与安全校验。"
+}
